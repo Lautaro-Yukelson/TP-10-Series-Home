@@ -1,0 +1,123 @@
+﻿@{
+    ViewData["Title"] = "Inicio";
+}
+
+<div class="text-center">
+    <h1 class="display-4">AlwaysON</h1>
+    <div class="series">
+        @foreach(Serie serie in ViewBag.Series){
+            <div class="card" style="width: 18rem;">
+                <img class="card-img-top" src=@serie.ImagenSerie alt="Imagen Serie">
+                <div class="card-body">
+                    <h5 class="card-title">@serie.Nombre</h5>
+                    <button type="button" class="btn btn-primary temporadas" data-bs-toggle="modal" data-bs-target="#temporadas" onclick="MostrarTemporadas(@serie.IdSerie)">Temporadas</button>
+                    <button type="button" class="btn btn-primary actores" data-bs-toggle="modal" data-bs-target="#actores" onclick="MostrarActores(@serie.IdSerie)">Actores</button>
+                    <button type="button" class="btn btn-primary masinfo" data-bs-toggle="modal" data-bs-target="#masinfo" onclick="MostrarMasInfo(@serie.IdSerie)">Más info</button>
+
+                </div>
+            </div>
+        }
+
+        <!-- Modal Temporadas -->
+        <div class="modal fade" id="temporadas" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Temporadas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modal-temporadas">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Temporadas -->
+        <div class="modal fade" id="actores" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Actores</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modal-actores">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Temporadas -->
+        <div class="modal fade" id="masinfo" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Más info</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modal-info">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function MostrarTemporadas(id){
+        $.ajax({
+            type: 'POST',
+            dataType: 'JSON',
+            url: '/Home/ObtenerTemporadasAjax',
+            data: {idSerie: id},
+            success:
+                function (response){
+                    const padre = document.getElementById("modal-temporadas");
+                    response.forEach((element) => {
+                        const p = document.createElement("p");
+                        p.innerText = element.tituloTemporada;
+                        padre.appendChild(p);
+                    });
+                }
+        });
+    }
+
+    function MostrarActores(id){
+        $.ajax({
+            type: 'POST',
+            dataType: 'JSON',
+            url: '/Home/ObtenerActoresAjax',
+            data: {idSerie: id},
+            success:
+                function (response){
+                    const padre = document.getElementById("modal-actores");
+                    response.forEach((element) => {
+                        const p = document.createElement("p");
+                        p.innerText = element.nombre;
+                        padre.appendChild(p);
+                    });
+                }
+        });
+    }
+
+    function MostrarMasInfo(id){
+        $.ajax({
+            type: 'POST',
+            dataType: 'JSON',
+            url: '/Home/ObtenerInfoAjax',
+            data: {idSerie: id},
+            success:
+                function (response){
+                    $("#modal-info").html(response.sinopsis);
+                }
+        });
+    }
+</script>
